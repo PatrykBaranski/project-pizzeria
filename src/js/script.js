@@ -95,6 +95,9 @@
       thisProduct.priceElem = thisProduct.element.querySelector(
         select.menuProduct.priceElem
       );
+      thisProduct.imageWrapper = thisProduct.element.querySelector(
+        select.menuProduct.imageWrapper
+      );
     }
 
     initAccordion() {
@@ -146,10 +149,15 @@
 
         for (const optionId in param.options) {
           const option = param.options[optionId];
+          const optionImageEl = thisProduct.imageWrapper.querySelector(
+            `.${paramId}-${optionId}`
+          );
 
+          optionImageEl?.classList.remove("active");
+          if (checkedOptions.includes(optionId))
+            optionImageEl?.classList.add("active");
           if (checkedOptions.includes(optionId) && !option.default)
             price += option.price;
-
           if (!checkedOptions.includes(optionId) && option.default)
             price -= option.price;
         }
