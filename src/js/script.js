@@ -147,9 +147,11 @@
         for (const optionId in param.options) {
           const option = param.options[optionId];
 
-          if (checkedOptions.includes(optionId)) {
+          if (checkedOptions.includes(optionId) && !option.default)
             price += option.price;
-          }
+
+          if (!checkedOptions.includes(optionId) && option.default)
+            price -= option.price;
         }
       }
 
