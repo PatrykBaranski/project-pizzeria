@@ -126,7 +126,7 @@
     initOrderForm() {
       const thisProduct = this;
 
-      thisProduct.form.addEventListener("submit", function (e) {
+      thisProduct.form.addEventListener("submit", (e) => {
         e.preventDefault();
         thisProduct.processOrder();
       });
@@ -137,7 +137,7 @@
         })
       );
 
-      thisProduct.cartButton.addEventListener("click", function (e) {
+      thisProduct.cartButton.addEventListener("click", (e) => {
         e.preventDefault();
         thisProduct.processOrder();
       });
@@ -227,14 +227,14 @@
 
     initActions() {
       const thisWidget = this;
-      thisWidget.input.addEventListener("change", function () {
-        thisWidget.setValue(thisWidget.input.value);
-      });
-      thisWidget.linkDecrease.addEventListener("click", function (e) {
+      thisWidget.input.addEventListener("change", () =>
+        thisWidget.setValue(thisWidget.input.value)
+      );
+      thisWidget.linkDecrease.addEventListener("click", (e) => {
         e.preventDefault();
         thisWidget.setValue(+thisWidget.input.value - 1);
       });
-      thisWidget.linkIncrease.addEventListener("click", function (e) {
+      thisWidget.linkIncrease.addEventListener("click", (e) => {
         e.preventDefault();
         thisWidget.setValue(+thisWidget.input.value + 1);
       });
