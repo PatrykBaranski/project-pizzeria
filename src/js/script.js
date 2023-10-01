@@ -89,6 +89,7 @@
 
       thisProduct.id = id;
       thisProduct.data = data;
+      thisProduct.dom = {};
 
       thisProduct.renderInMenu();
       thisProduct.getElements();
@@ -110,33 +111,33 @@
     getElements() {
       const thisProduct = this;
 
-      thisProduct.accordionTrigger = thisProduct.element.querySelector(
-        select.menuProduct.clickable
-      );
-      thisProduct.form = thisProduct.element.querySelector(
-        select.menuProduct.form
-      );
-      thisProduct.formInputs = thisProduct.form.querySelectorAll(
-        select.all.formInputs
-      );
-      thisProduct.cartButton = thisProduct.element.querySelector(
-        select.menuProduct.cartButton
-      );
-      thisProduct.priceElem = thisProduct.element.querySelector(
-        select.menuProduct.priceElem
-      );
-      thisProduct.imageWrapper = thisProduct.element.querySelector(
-        select.menuProduct.imageWrapper
-      );
-      thisProduct.amountWidgetElem = thisProduct.element.querySelector(
-        select.menuProduct.amountWidget
-      );
+      thisProduct.dom = {
+        accordionTrigger: thisProduct.element.querySelector(
+          select.menuProduct.clickable
+        ),
+        form: thisProduct.element.querySelector(select.menuProduct.form),
+        formInputs: thisProduct.element
+          .querySelector(select.menuProduct.form)
+          .querySelectorAll(select.all.formInputs),
+        cartButton: thisProduct.element.querySelector(
+          select.menuProduct.cartButton
+        ),
+        priceElem: thisProduct.element.querySelector(
+          select.menuProduct.priceElem
+        ),
+        imageWrapper: thisProduct.element.querySelector(
+          select.menuProduct.imageWrapper
+        ),
+        amountWidgetElem: thisProduct.element.querySelector(
+          select.menuProduct.amountWidget
+        ),
+      };
     }
 
     initAccordion() {
       const thisProduct = this;
 
-      thisProduct.accordionTrigger.addEventListener("click", (e) => {
+      thisProduct.dom.accordionTrigger.addEventListener("click", (e) => {
         e.preventDefault();
         const activeProducts = document.querySelectorAll(
           select.all.menuProductsActive
@@ -154,19 +155,20 @@
 
     initOrderForm() {
       const thisProduct = this;
+      const { form, formInputs, cartButton } = thisProduct.dom;
 
-      thisProduct.form.addEventListener("submit", (e) => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
         thisProduct.processOrder();
       });
 
-      thisProduct.formInputs.forEach((input) =>
+      formInputs.forEach((input) =>
         input.addEventListener("change", () => {
           thisProduct.processOrder();
         })
       );
 
-      thisProduct.cartButton.addEventListener("click", (e) => {
+      cartButton.addEventListener("click", (e) => {
         e.preventDefault();
         thisProduct.processOrder();
       });
@@ -175,15 +177,17 @@
     initAmountWidget() {
       const thisProduct = this;
 
-      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
-      thisProduct.amountWidgetElem.addEventListener("update", () => {
+      thisProduct.amountWidget = new AmountWidget(
+        thisProduct.dom.amountWidgetElem
+      );
+      thisProduct.dom.amountWidgetElem.addEventListener("update", () => {
         thisProduct.processOrder();
       });
     }
 
     processOrder() {
       const thisProduct = this;
-      const formData = utils.serializeFormToObject(thisProduct.form);
+      const formData = utils.serializeFormToObject(thisProduct.dom.form);
       let price = thisProduct.data.price;
 
       for (const paramId in thisProduct.data.params) {
@@ -192,7 +196,7 @@
 
         for (const optionId in param.options) {
           const option = param.options[optionId];
-          const optionImageEl = thisProduct.imageWrapper.querySelector(
+          const optionImageEl = thisProduct.dom.imageWrapper.querySelector(
             `.${paramId}-${optionId}`
           );
 
@@ -206,7 +210,8 @@
         }
       }
 
-      thisProduct.priceElem.innerHTML = price * thisProduct.amountWidget.value;
+      thisProduct.dom.priceElem.innerHTML =
+        price * thisProduct.amountWidget.value;
     }
   }
   class AmountWidget {
@@ -273,6 +278,22 @@
 
       const event = new Event("update");
       thisWidget.element.dispatchEvent(event);
+    }
+  }
+  class Cart {
+    constructor(element) {
+      const thisCart = this;
+
+      thisCart.products = [];
+
+      thisCart.getElements(element);
+      console.log("new Cart", thisCart);
+    }
+    getElements(element) {
+      const thisCart = this;
+
+      thisCart.dom = {};
+      thisCart.dom.wrapper = element;
     }
   }
   const app = {
