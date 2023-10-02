@@ -171,6 +171,7 @@
       cartButton.addEventListener("click", (e) => {
         e.preventDefault();
         thisProduct.processOrder();
+        thisProduct.addToCart(thisProduct);
       });
     }
 
@@ -210,8 +211,55 @@
         }
       }
 
+      thisProduct.priceSingle = price;
       thisProduct.dom.priceElem.innerHTML =
         price * thisProduct.amountWidget.value;
+    }
+    addToCart() {
+      const thisProduct = this;
+
+      thisProduct.prepareCartProduct();
+      app.cart.add(thisProduct.prepareCartProduct());
+    }
+    prepareCartProduct() {
+      const thisProduct = this;
+      const {
+        id,
+        data: { name },
+        amountWidget: { value: amount },
+        priceSingle,
+      } = thisProduct;
+      const productSummary = {
+        id,
+        name,
+        amount,
+        priceSingle,
+        price: priceSingle * amount,
+        params: thisProduct.prepareCartProductParams(),
+      };
+      return productSummary;
+    }
+    prepareCartProductParams() {
+      const thisProduct = this;
+      const formData = utils.serializeFormToObject(thisProduct.dom.form);
+      const productParams = {};
+      for (const paramId in thisProduct.data.params) {
+        const param = thisProduct.data.params[paramId];
+        const checkedOptions = formData[paramId];
+
+        productParams[paramId] = {
+          label: param.label,
+          options: {},
+        };
+        for (const optionId in param.options) {
+          const option = param.options[optionId];
+
+          if (checkedOptions.includes(optionId)) {
+            productParams[paramId].options[optionId] = option.label;
+          }
+        }
+      }
+      return productParams;
     }
   }
   class AmountWidget {
@@ -298,6 +346,9 @@
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(
         select.cart.toggleTrigger
       );
+      thisCart.dom.productList = thisCart.dom.wrapper.querySelector(
+        select.cart.productList
+      );
     }
     initActions() {
       const thisCart = this;
@@ -306,6 +357,13 @@
       toggleTrigger.addEventListener("click", () =>
         wrapper.classList.toggle(classNames.cart.wrapperActive)
       );
+    }
+    add(menuProduct) {
+      const thisCart = this;
+      const generatedHTML = templates.cartProduct(menuProduct);
+      const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+
+      thisCart.dom.productList.appendChild(generatedDOM);
     }
   }
   const app = {
