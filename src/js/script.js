@@ -72,6 +72,11 @@
     cart: {
       defaultDeliveryFee: 20,
     },
+    db: {
+      url: "//localhost:3131",
+      products: "products",
+      orders: "orders",
+    },
   };
 
   const templates = {
@@ -86,7 +91,7 @@
   class Product {
     constructor(id, data) {
       const thisProduct = this;
-
+      console.log(thisProduct);
       thisProduct.id = id;
       thisProduct.data = data;
       thisProduct.dom = {};
@@ -479,7 +484,7 @@
 
     initActions() {
       const thisCart = this;
-      const { remove, edit } = thisCart.dom;
+      const { remove } = thisCart.dom;
 
       remove.addEventListener("click", () => {
         thisCart.remove();
@@ -492,20 +497,26 @@
     initMenu: function () {
       const thisApp = this;
 
-      for (const productData in thisApp.data.products) {
-        new Product(productData, thisApp.data.products[productData]);
-      }
+      thisApp.data.forEach((product) => new Product(product.id, product));
     },
 
-    initData: function () {
+    initData: async function () {
       const thisApp = this;
-
-      thisApp.data = dataSource;
+      try {
+        const url = `${settings.db.url}/${settings.db.products}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        thisApp.data = data;
+        thisApp.initMenu();
+        console.log(thisApp.data);
+      } catch (error) {
+        console.log(error);
+      }
     },
     initCart: function () {
       const thisApp = this;
-
       const cartElem = document.querySelector(select.containerOf.cart);
+
       thisApp.cart = new Cart(cartElem);
     },
     init: function () {
@@ -517,7 +528,6 @@
       console.log("templates:", templates);
 
       thisApp.initData();
-      thisApp.initMenu();
       thisApp.initCart();
     },
   };
