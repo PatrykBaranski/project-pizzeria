@@ -91,7 +91,6 @@
   class Product {
     constructor(id, data) {
       const thisProduct = this;
-      console.log(thisProduct);
       thisProduct.id = id;
       thisProduct.data = data;
       thisProduct.dom = {};
@@ -397,7 +396,6 @@
       const thisCart = this;
 
       cartProduct.dom.wrapper.remove();
-      console.log(thisCart.products.indexOf(cartProduct));
       thisCart.products.splice(thisCart.products.indexOf(cartProduct), 1);
       thisCart.update();
     }
@@ -418,7 +416,9 @@
         totalNumber += product.amount;
         subtotalPrice += product.price;
       });
-      if (products) thisCart.totalPrice = subtotalPrice + deliveryFee;
+      if (products) {
+        thisCart.totalPrice = subtotalPrice + deliveryFee;
+      }
       totalNumberElem.innerHTML = totalNumber;
       totalPriceElems.forEach((elem) => (elem.innerHTML = thisCart.totalPrice));
       deliveryFeElem.innerHTML = deliveryFee;
@@ -488,7 +488,6 @@
 
       remove.addEventListener("click", () => {
         thisCart.remove();
-        console.log("remove");
       });
     }
   }
@@ -508,7 +507,6 @@
         const data = await response.json();
         thisApp.data = data;
         thisApp.initMenu();
-        console.log(thisApp.data);
       } catch (error) {
         console.log(error);
       }
@@ -521,11 +519,6 @@
     },
     init: function () {
       const thisApp = this;
-      console.log("*** App starting ***");
-      console.log("thisApp:", thisApp);
-      console.log("classNames:", classNames);
-      console.log("settings:", settings);
-      console.log("templates:", templates);
 
       thisApp.initData();
       thisApp.initCart();
