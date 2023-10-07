@@ -75,7 +75,7 @@
     db: {
       url: "//localhost:3131",
       products: "products",
-      orders: "orders",
+      orders: "order",
     },
   };
 
@@ -366,11 +366,18 @@
       thisCart.dom.totalNumberElem = thisCart.dom.wrapper.querySelector(
         select.cart.totalNumber
       );
+      thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
+      thisCart.dom.phone = thisCart.dom.wrapper.querySelector(
+        select.cart.phone
+      );
+      thisCart.dom.address = thisCart.dom.wrapper.querySelector(
+        select.cart.address
+      );
     }
 
     initActions() {
       const thisCart = this;
-      const { toggleTrigger, wrapper, productList } = thisCart.dom;
+      const { toggleTrigger, wrapper, productList, form } = thisCart.dom;
 
       toggleTrigger.addEventListener("click", () =>
         wrapper.classList.toggle(classNames.cart.wrapperActive)
@@ -380,6 +387,35 @@
       });
       productList.addEventListener("remove", (e) => {
         thisCart.remove(e.detail.cartProduct);
+      });
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        thisCart.sendOrder();
+      });
+    }
+
+    sendOrder() {
+      const thisCart = this;
+      const { address, phone } = thisCart.dom;
+      const { totalPrice, totalNumber, deliveryFee, subtotalPrice } = thisCart;
+      const url = `${settings.db.url}/${settings.db.orders}`;
+      const payload = {
+        address: address.value,
+        phone: phone.value,
+        totalPrice,
+        subtotalPrice,
+        totalNumber,
+        deliveryFee,
+        products: thisCart.products.map((product) => product.getData()),
+      };
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }).then((response) => {
+        console.log("response:", response);
       });
     }
 
@@ -419,6 +455,9 @@
       if (products) {
         thisCart.totalPrice = subtotalPrice + deliveryFee;
       }
+      thisCart.totalNumber = totalNumber;
+      thisCart.deliveryFee = deliveryFee;
+      thisCart.subtotalPrice = subtotalPrice;
       totalNumberElem.innerHTML = totalNumber;
       totalPriceElems.forEach((elem) => (elem.innerHTML = thisCart.totalPrice));
       deliveryFeElem.innerHTML = deliveryFee;
@@ -483,12 +522,25 @@
     }
 
     initActions() {
-      const thisCart = this;
-      const { remove } = thisCart.dom;
+      const thisCartProduct = this;
+      const { remove } = thisCartProduct.dom;
 
       remove.addEventListener("click", () => {
-        thisCart.remove();
+        thisCartProduct.remove();
       });
+    }
+
+    getData() {
+      const thisCartProduct = this;
+      const { id, amount, price, priceSingle, name, params } = thisCartProduct;
+      return {
+        id,
+        amount,
+        price,
+        priceSingle,
+        name,
+        params,
+      };
     }
   }
 
