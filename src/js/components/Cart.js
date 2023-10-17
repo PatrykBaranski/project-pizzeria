@@ -122,12 +122,15 @@ class Cart {
     if (products) {
       thisCart.totalPrice = subtotalPrice + deliveryFee;
     }
+
     thisCart.totalNumber = totalNumber;
     thisCart.deliveryFee = deliveryFee;
     thisCart.subtotalPrice = subtotalPrice;
     totalNumberElem.innerHTML = totalNumber;
-    totalPriceElems.forEach((elem) => (elem.innerHTML = thisCart.totalPrice));
-    deliveryFeElem.innerHTML = deliveryFee;
+    totalPriceElems.forEach(
+      (elem) => (elem.innerHTML = subtotalPrice ? thisCart.totalPrice : 0)
+    );
+    deliveryFeElem.innerHTML = subtotalPrice ? deliveryFee : 0;
     subtotalPriceElem.innerHTML = subtotalPrice;
   }
 }

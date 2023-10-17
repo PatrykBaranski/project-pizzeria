@@ -7,6 +7,7 @@ import HourPicker from "./HourPicker.js";
 class Booking {
   constructor(element) {
     const thisBooking = this;
+    thisBooking.selectedTable = 0;
 
     thisBooking.render(element);
     thisBooking.initWidgets();
@@ -166,11 +167,22 @@ class Booking {
       select.widgets.hourPicker.wrapper
     );
     thisBooking.dom.tables = document.querySelectorAll(select.booking.tables);
+    thisBooking.dom.floorPlan = document.querySelector(
+      select.booking.floorPlan
+    );
+  }
+
+  resetActiveTables() {
+    const { tables } = this.dom;
+    this.selectedTable = 0;
+    tables.forEach((table) => {
+      table.classList.remove("active");
+    });
   }
 
   initWidgets() {
     const thisBooking = this;
-    const { peopleAmount, hoursAmount, datePicker, hoursPicker } =
+    const { peopleAmount, hoursAmount, datePicker, hoursPicker, floorPlan } =
       thisBooking.dom;
 
     new AmountWidget(peopleAmount);
@@ -179,11 +191,31 @@ class Booking {
     thisBooking.datePicker = new DatePicker(datePicker);
     thisBooking.hourPicker = new HourPicker(hoursPicker);
 
-    peopleAmount.addEventListener("update", () => {});
-    hoursAmount.addEventListener("update", () => {});
+    [floorPlan, datePicker, hoursPicker].forEach((elem) => {
+      elem.addEventListener("update", () => {
+        thisBooking.updateDOM();
+        thisBooking.resetActiveTables();
+      });
+    });
 
-    thisBooking.dom.wrapper.addEventListener("update", () => {
-      thisBooking.updateDOM();
+    floorPlan.addEventListener("click", (e) => {
+      const clickedElement = e.target;
+      if (
+        !(
+          clickedElement.classList.contains("table") &&
+          !clickedElement.classList.contains("booked")
+        )
+      )
+        return;
+
+      if (clickedElement.classList.contains("active")) {
+        clickedElement.classList.remove("active");
+        thisBooking.selectedTable = 0;
+      } else {
+        thisBooking.resetActiveTables();
+        clickedElement.classList.add("active");
+        thisBooking.selectedTable = +clickedElement.dataset.table;
+      }
     });
   }
 }
