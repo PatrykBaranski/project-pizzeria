@@ -214,6 +214,9 @@
     width: 100px;
     height: 100px;
     line-height: 100px;
+    &::before {
+      border-radius: 50%;
+    }
   }
 
   [data-table="3"] {

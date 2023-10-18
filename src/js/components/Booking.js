@@ -89,7 +89,14 @@ class Booking {
 
     thisBooking.updateDOM();
   }
+  notAvialbe(allAvailable, tableID) {
+    const thisBooking = this;
 
+    return (
+      !allAvailable &&
+      thisBooking.booked[thisBooking.date][thisBooking.hour].includes(tableID)
+    );
+  }
   updateDOM() {
     const thisBooking = this;
 
@@ -113,10 +120,7 @@ class Booking {
         tableID = parseInt(tableID);
       }
 
-      if (
-        !allAvailable &&
-        thisBooking.booked[thisBooking.date][thisBooking.hour].includes(tableID)
-      ) {
+      if (thisBooking.notAvialbe(allAvailable, tableID)) {
         table.classList.add(classNames.booking.tableBooked);
         thisBooking.resetActiveTables();
       } else {
@@ -206,13 +210,12 @@ class Booking {
 
     floorPlan.addEventListener("click", (e) => {
       const clickedElement = e.target;
-      if (
-        !(
-          clickedElement.classList.contains("table") &&
-          !clickedElement.classList.contains("booked")
-        )
-      )
+
+      if (!clickedElement.classList.contains("table")) return;
+      if (clickedElement.classList.contains("booked")) {
+        alert("Pleas select not booked table");
         return;
+      }
 
       if (clickedElement.classList.contains("active")) {
         clickedElement.classList.remove("active");
@@ -230,7 +233,7 @@ class Booking {
     });
   }
 
-  sendBooking() {
+  generatePayload() {
     const thisBooking = this;
     const { date, selectedTable: table } = thisBooking;
     const hour = thisBooking.hourPicker.correctValue;
@@ -240,8 +243,7 @@ class Booking {
     const phone = wrapper.querySelector("[name=phone]").value;
     const address = wrapper.querySelector("[name=address").value;
 
-    const url = `${settings.db.url}/${settings.db.bookings}`;
-    const payload = {
+    return {
       date,
       hour,
       table,
@@ -253,6 +255,12 @@ class Booking {
       phone,
       address,
     };
+  }
+
+  sendBooking() {
+    const thisBooking = this;
+    const url = `${settings.db.url}/${settings.db.bookings}`;
+    const payload = thisBooking.generatePayload();
 
     fetch(url, {
       method: "POST",
