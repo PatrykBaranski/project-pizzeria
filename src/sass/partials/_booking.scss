@@ -190,7 +190,7 @@
     }
 
     &.active {
-      &::after {
+      &::before {
         position: absolute;
         content: "";
         width: 100%;

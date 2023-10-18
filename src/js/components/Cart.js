@@ -66,6 +66,7 @@ class Cart {
     const { address, phone } = thisCart.dom;
     const { totalPrice, totalNumber, deliveryFee, subtotalPrice } = thisCart;
     const url = `${settings.db.url}/${settings.db.orders}`;
+
     const payload = {
       address: address.value,
       phone: phone.value,
@@ -75,6 +76,7 @@ class Cart {
       deliveryFee,
       products: thisCart.products.map((product) => product.getData()),
     };
+
     fetch(url, {
       method: "POST",
       headers: {
