@@ -55,7 +55,11 @@ const app = {
     const thisApp = this;
 
     thisApp.pages = document.querySelector(select.containerOf.pages).children;
-    thisApp.navLinks = document.querySelectorAll(select.nav.links);
+
+    thisApp.navLinks = [
+      ...document.querySelectorAll(select.nav.links),
+      ...document.querySelectorAll(select.all.homeNavLinks),
+    ];
 
     const windowID = window.location.hash.slice(1, -1);
     let pageMatchingHash = thisApp.pages[0].id;

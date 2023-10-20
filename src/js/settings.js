@@ -14,6 +14,7 @@ export const select = {
     menuProducts: "#product-list > .product",
     menuProductsActive: "#product-list > .product.active",
     formInputs: "input, select",
+    homeNavLinks: ".general-info a",
   },
   menuProduct: {
     clickable: ".product__header",

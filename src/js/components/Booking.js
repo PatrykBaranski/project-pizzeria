@@ -89,7 +89,7 @@ class Booking {
 
     thisBooking.updateDOM();
   }
-  notAvialbe(allAvailable, tableID) {
+  notAvailable(allAvailable, tableID) {
     const thisBooking = this;
 
     return (
@@ -120,7 +120,7 @@ class Booking {
         tableID = parseInt(tableID);
       }
 
-      if (thisBooking.notAvialbe(allAvailable, tableID)) {
+      if (thisBooking.notAvailable(allAvailable, tableID)) {
         table.classList.add(classNames.booking.tableBooked);
         thisBooking.resetActiveTables();
       } else {
