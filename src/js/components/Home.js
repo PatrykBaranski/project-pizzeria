@@ -44,14 +44,12 @@ class Home {
       const clickedBtn = e.target;
       const buttonIndex = clickedBtn.dataset.index;
 
-      carouselBtns.forEach((btn) => btn.classList.remove("active"));
-
       carouselCells.forEach((elem, i) => {
-        elem.classList.remove("active");
-        if (elem.dataset.index === buttonIndex) elem.classList.add("active");
+        // if (elem.dataset.index === buttonIndex) elem.classList.add("active");
         elem.style.transform = `translateX(${(i - buttonIndex) * 100}%)`;
       });
 
+      carouselBtns.forEach((btn) => btn.classList.remove("active"));
       clickedBtn.classList.add("active");
     });
   }
